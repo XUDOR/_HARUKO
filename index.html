@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haruko Imports</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo-title">
+      <h1>Haruko Imports</h1>
+    </div>
+  </header>
+  <nav class="sidebar">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Products</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+  <main>
+    <div class="collapsible-container" id="section1">
+      <button class="collapsible">Section 1</button>
+      <div class="content">
+        <p>Content for section 1.</p>
+      </div>
+    </div>
+    <div class="collapsible-container" id="section2">
+      <button class="collapsible">Section 2</button>
+      <div class="content">
+        <p>Content for section 2.</p>
+      </div>
+    </div>
+    <div class="collapsible-container" id="section3">
+      <button class="collapsible">Section 3</button>
+      <div class="content">
+        <p>Content for section 3.</p>
+      </div>
+    </div>
+    <div class="collapsible-container" id="section4">
+      <button class="collapsible">Section 4</button>
+      <div class="content">
+        <p>Content for section 4.</p>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2024 RDXENV | Haruko Imports</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const collapsibles = document.querySelectorAll('.collapsible');
+
+      collapsibles.forEach(button => {
+        button.addEventListener('click', () => {
+          const content = button.nextElementSibling;
+          content.classList.toggle('show');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

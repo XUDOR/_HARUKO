@@ -1,0 +1,149 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  display: flex;
+  min-height: 100vh;
+  background-color: #0C0101; /* Deep black-brown */
+  color: #FAFAFA; /* Light text for contrast */
+}
+
+/* Layout */
+body {
+  display: grid;
+  grid-template-columns: 20% 1fr; /* Sidebar and main content */
+  grid-template-rows: auto 1fr auto; /* Header, content, footer */
+}
+
+/* Header */
+header {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: lighter;
+  background-color: #0C0101; /* Deep black-brown */
+  color: #E28181; /* Light text */
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #D12466; /* Red accent for separation */
+  grid-column: 1 / 3; /* Span across the grid */
+}
+
+h1 {
+  font-size: 3em; /* Slightly larger for emphasis */
+  font-weight: 300; /* Thin weight for Helvetica Neue */
+  color: #FFCCCC; /* Matches light text color */
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #1C0202; /* Muted green */
+  padding: 10px;
+  grid-row: 2 / 3; /* Fill the vertical space */
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: white;
+  font-weight: normal; /* Normal text weight */
+  display: block;
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #57030A; /* Deep teal */
+}
+
+.sidebar a:hover {
+  background-color: #E04C4C; /* Light red */
+  color: #330404; /* Darker red */
+  transition: background-color 0.2s ease; /* Smooth hover */
+}
+
+/* Main */
+main {
+  padding: 20px;
+  grid-row: 2 / 3;
+  grid-column: 2 / 3; /* Start to the right of the sidebar */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 20px; /* Space between sections */
+}
+
+/* Collapsible Sections */
+.collapsible-container {
+  background-color: #190808; /* Floral pink */
+  color: white;
+  border: 2px solid #E56161; /* Neutral border */
+  border-radius: 1px;
+  overflow: hidden; /* Ensure content doesn't overflow */
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.collapsible {
+  background-color: #190808; /* Floral pink */
+  color: #D39990;
+  cursor: pointer;
+  padding: 12px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 18px;
+  font-weight: lighter;
+  transition: background-color 0.3s ease; /* Smooth hover */
+}
+
+.collapsible:hover {
+  background-color: #774D4D; /* Deep rose */
+}
+
+.content {
+  padding: 15px;
+  display: none; /* Hidden by default */
+  font-weight: normal;
+  background-color: #211F1F; /* Warm light */
+  color: #FAFAFA; /* Dark text for contrast */
+  height: 400px;
+}
+
+.content.show {
+  display: block; /* Show content when active */
+}
+
+/* Footer */
+footer {
+  background-color: #0C0101; /* Deep black */
+  color: #903336; /* Dark red */
+  text-align: right;
+  padding: 12px;
+  font-size: 14px;
+  grid-column: 1 / 3; /* Span across the grid */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    grid-template-columns: 1fr; /* Single column layout */
+    grid-template-rows: auto auto 1fr auto; /* Sidebar stacks above sections */
+  }
+
+  .sidebar {
+    grid-column: 1 / 2; /* Sidebar spans full width */
+    grid-row: 2 / 3; /* Place below the header */
+  }
+
+  main {
+    grid-column: 1 / 2; /* Main spans full width */
+    grid-row: 3 / 4; /* Place below the sidebar */
+    display: grid;
+    grid-template-columns: 1fr; /* Single column for collapsible sections */
+    gap: 20px;
+  }
+}
