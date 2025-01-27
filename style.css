@@ -10,41 +10,61 @@ body {
   font-weight: normal;
   display: flex;
   min-height: 100vh;
-  background-color: #0C0101; /* Deep black-brown */
-  color: #FAFAFA; /* Light text for contrast */
+  background-color: #0C0101;
+  color: #FAFAFA;
 }
 
 /* Layout */
 body {
   display: grid;
-  grid-template-columns: 20% 1fr; /* Sidebar and main content */
-  grid-template-rows: auto 1fr auto; /* Header, content, footer */
+  grid-template-columns: 20% 1fr;
+  grid-template-rows: auto 1fr auto;
 }
 
 /* Header */
 header {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: lighter;
-  background-color: #0C0101; /* Deep black-brown */
-  color: #E28181; /* Light text */
+  background-color: #0C0101;
+  color: #E28181;
   padding: 15px 20px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #D12466; /* Red accent for separation */
-  grid-column: 1 / 3; /* Span across the grid */
+  gap: 20px;
+  border-bottom: 1px solid #D12466;
+  grid-column: 1 / 3;
 }
 
-h1 {
-  font-size: 3em; /* Slightly larger for emphasis */
-  font-weight: 300; /* Thin weight for Helvetica Neue */
-  color: #FFCCCC; /* Matches light text color */
+/* Logo and Title Adjustments */
+.logo-title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: nowrap;
+  width: 100%;
+  overflow: hidden;
+}
+
+.logo {
+  max-width: 120px;
+  height: auto;
+  margin-right: 1em;
+}
+
+.logoText {
+  font-size: 2.5em;
+  font-family: 'Futura PT', sans-serif;
+  font-weight: 100;
+  color: #FFCCCC;
+  white-space: nowrap;
 }
 
 /* Sidebar */
 .sidebar {
-  background-color: #1C0202; /* Muted green */
+  background-color: #1C0202;
   padding: 10px;
-  grid-row: 2 / 3; /* Fill the vertical space */
+  grid-row: 2 / 3;
 }
 
 .sidebar ul {
@@ -54,41 +74,57 @@ h1 {
 .sidebar a {
   text-decoration: none;
   color: white;
-  font-weight: normal; /* Normal text weight */
+  font-weight: normal;
   display: block;
   padding: 12px;
   margin-bottom: 8px;
-  background-color: #57030A; /* Deep teal */
+  background-color: #57030A;
 }
 
 .sidebar a:hover {
-  background-color: #E04C4C; /* Light red */
-  color: #330404; /* Darker red */
-  transition: background-color 0.2s ease; /* Smooth hover */
+  background-color: #E04C4C;
+  color: #330404;
+  transition: background-color 0.2s ease;
+}
+
+#toggle-button {
+  background-color: #E04C4C;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: 'Futura PT', sans-serif;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: auto;
+}
+
+#toggle-button:hover {
+  background-color: #FF6F6F;
 }
 
 /* Main */
 main {
   padding: 20px;
   grid-row: 2 / 3;
-  grid-column: 2 / 3; /* Start to the right of the sidebar */
+  grid-column: 2 / 3;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns */
-  gap: 20px; /* Space between sections */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 /* Collapsible Sections */
 .collapsible-container {
-  background-color: #190808; /* Floral pink */
+  background-color: #190808;
   color: white;
-  border: 2px solid #E56161; /* Neutral border */
+  border: 2px solid #E56161;
   border-radius: 1px;
-  overflow: hidden; /* Ensure content doesn't overflow */
-  transition: all 0.3s ease; /* Smooth transitions */
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .collapsible {
-  background-color: #190808; /* Floral pink */
+  background-color: #190808;
   color: #D39990;
   cursor: pointer;
   padding: 12px;
@@ -97,53 +133,64 @@ main {
   text-align: left;
   font-size: 18px;
   font-weight: lighter;
-  transition: background-color 0.3s ease; /* Smooth hover */
+  transition: background-color 0.3s ease;
 }
 
 .collapsible:hover {
-  background-color: #774D4D; /* Deep rose */
+  background-color: #774D4D;
 }
 
 .content {
   padding: 15px;
-  display: none; /* Hidden by default */
+  display: none;
   font-weight: normal;
-  background-color: #211F1F; /* Warm light */
-  color: #FAFAFA; /* Dark text for contrast */
+  background-color: #211F1F;
+  color: #FAFAFA;
   height: 400px;
 }
 
 .content.show {
-  display: block; /* Show content when active */
+  display: block;
 }
 
 /* Footer */
 footer {
-  background-color: #0C0101; /* Deep black */
-  color: #903336; /* Dark red */
+  background-color: #0C0101;
+  color: #903336;
   text-align: right;
   padding: 12px;
   font-size: 14px;
-  grid-column: 1 / 3; /* Span across the grid */
+  grid-column: 1 / 3;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   body {
-    grid-template-columns: 1fr; /* Single column layout */
-    grid-template-rows: auto auto 1fr auto; /* Sidebar stacks above sections */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .logo-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
   }
 
   .sidebar {
-    grid-column: 1 / 2; /* Sidebar spans full width */
-    grid-row: 2 / 3; /* Place below the header */
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
   }
 
   main {
-    grid-column: 1 / 2; /* Main spans full width */
-    grid-row: 3 / 4; /* Place below the sidebar */
-    display: grid;
-    grid-template-columns: 1fr; /* Single column for collapsible sections */
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+    grid-template-columns: 1fr;
     gap: 20px;
   }
 }

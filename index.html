@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Haruko Imports</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Futura+PT&display=swap">
 </head>
 <body>
   <header>
     <div class="logo-title">
-      <h1>Haruko Imports</h1>
+      <img src="assets/HARUKO-LOGOv4A-7px.svg" alt="Haruko Logo" class="logo">
+      <h1 class="logoText">Haruko Imports</h1>
     </div>
+    <button id="toggle-button">Japan Imports</button>
   </header>
+  
   <nav class="sidebar">
     <ul>
       <li><a href="#">Home</a></li>
@@ -20,6 +24,7 @@
       <li><a href="#">Contact</a></li>
     </ul>
   </nav>
+
   <main>
     <div class="collapsible-container" id="section1">
       <button class="collapsible">Section 1</button>
@@ -46,20 +51,11 @@
       </div>
     </div>
   </main>
+
   <footer>
     <p>&copy; 2024 RDXENV | Haruko Imports</p>
   </footer>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const collapsibles = document.querySelectorAll('.collapsible');
 
-      collapsibles.forEach(button => {
-        button.addEventListener('click', () => {
-          const content = button.nextElementSibling;
-          content.classList.toggle('show');
-        });
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
