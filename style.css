@@ -47,10 +47,11 @@ header {
 }
 
 .logo {
-  max-width: 120px;
+  max-width: 20%; /* Adjust the percentage as needed */
   height: auto;
   margin-right: 1em;
 }
+
 
 .logoText {
   font-size: 2.5em;
@@ -181,6 +182,13 @@ footer {
     align-items: flex-start;
     gap: 5px;
   }
+
+  .logo {
+    max-width: 100%; /* Adjust the percentage as needed */
+    height: auto;
+    margin-right: .4em;
+  }
+  
 
   .sidebar {
     grid-column: 1 / 2;
