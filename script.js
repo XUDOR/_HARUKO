@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Select DOM elements
-  const collapsibles = document.querySelectorAll('.collapsible');
-  const toggleButton = document.getElementById('toggle-button');
   const containers = document.querySelectorAll('.collapsible-container');
 
   // Define imports data with titles and content
@@ -15,36 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
       content: 'Authentic Japanese Kotatsu tables, combining comfort and functionality. Perfect for keeping warm during winter while enjoying meals or relaxing.'
     },
     section3: {
-      title: 'Apparel & Household',
+      title: 'Anime',
+      content: 'Explore our collection of Japanese animation, movies, music, and other media. Direct imports from Japan with original packaging.'
+    },
+    section4: {
+      title: 'Japanese Store',
       content: 'Discover unique Japanese clothing styles and household items. From traditional wear to modern Japanese home goods.'
     },
-    section4: {
-      title: 'Anime & Media',
-      content: 'Explore our collection of Japanese animation, movies, music, and other media. Direct imports from Japan with original packaging.'
+    section5: {
+      title: 'Gaijin Haiku',
+      content: 'Immerse yourself in a collection of Japanese poetry and artistic expression. Unique imports that blend traditional and modern styles.'
     }
   };
-
-  const usImports = {
-    section1: {
-      title: 'Pickup Trucks',
-      content: 'American-made pickup trucks known for their durability and power. Perfect for both work and leisure, featuring latest safety technologies.'
-    },
-    section2: {
-      title: 'Coffee Tables',
-      content: 'Modern American-designed coffee tables combining style and functionality. Made with premium materials for lasting quality.'
-    },
-    section3: {
-      title: 'Clothing & Accessories',
-      content: 'Contemporary American fashion and accessories. From casual wear to designer pieces, representing the latest US trends.'
-    },
-    section4: {
-      title: 'Movies & Music',
-      content: 'The latest in American entertainment, including Hollywood releases, popular music, and digital media content.'
-    }
-  };
-
-  // Track current state
-  let isJapanImports = true;
 
   // Function to update section content
   const updateSections = (imports) => {
@@ -52,37 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const sectionKey = `section${index + 1}`;
       const button = container.querySelector('.collapsible');
       const content = container.querySelector('.content p');
-      
+
       // Update button text and content
-      button.textContent = imports[sectionKey].title;
-      content.textContent = imports[sectionKey].content;
+      if (imports[sectionKey]) {
+        button.textContent = imports[sectionKey].title;
+        content.textContent = imports[sectionKey].content;
+      }
     });
   };
 
   // Initialize with Japan imports
   updateSections(japanImports);
 
-  // Toggle button event listener
-  toggleButton.addEventListener('click', () => {
-    isJapanImports = !isJapanImports;
-    toggleButton.textContent = isJapanImports ? 'Japan Imports' : 'U.S. Imports';
-    updateSections(isJapanImports ? japanImports : usImports);
-  });
-
   // Collapsible sections event listeners
-  collapsibles.forEach((button) => {
+  containers.forEach((container) => {
+    const button = container.querySelector('.collapsible');
     button.addEventListener('click', () => {
-      // Toggle the clicked section
       const content = button.nextElementSibling;
       content.classList.toggle('show');
-      
-      // Optional: Close other sections
-      // containers.forEach(container => {
-      //   const otherContent = container.querySelector('.content');
-      //   if (otherContent !== content) {
-      //     otherContent.classList.remove('show');
-      //   }
-      // });
     });
   });
 });
