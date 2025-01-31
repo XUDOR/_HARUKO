@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Define imports data with titles and content
   const japanImports = {
     section1: {
-      title: 'Kei Trucks',
+      title: 'K Trucks',
       content: 'Browse our selection of compact Japanese Kei trucks, perfect for urban deliveries and small businesses. Features include excellent fuel economy and easy maneuverability.'
     },
     section2: {
-      title: 'Kotatsu Tables',
+      title: 'Kotatsu',
       content: 'Authentic Japanese Kotatsu tables, combining comfort and functionality. Perfect for keeping warm during winter while enjoying meals or relaxing.'
     },
     section3: {
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     section5: {
       title: 'Gaijin Haiku',
-      content: 'Immerse yourself in a collection of Japanese poetry and artistic expression. Unique imports that blend traditional and modern styles.'
+      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
     }
   };
 
