@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // Fetch external links
-  let externalLink = '#';
+  let externalLink = 'https://skiptskool.onrender.com/';
   let externalSvg = 'assets/SKPTSKL-T1.svg'; // Default to direct path even if fetch fails
 
   try {
