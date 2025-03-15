@@ -47,11 +47,10 @@ header {
 }
 
 .logo {
-  max-width: 20%; /* Adjust the percentage as needed */
+  max-width: 20%;
   height: auto;
   margin-right: 1em;
 }
-
 
 .logoText {
   font-size: 2.5em;
@@ -119,7 +118,7 @@ main {
   background-color: #190808;
   color: white;
   border: 2px solid #E56161;
-  border-radius: 1px;
+  border-radius: 5px;
   overflow: hidden;
   transition: all 0.3s ease;
 }
@@ -147,11 +146,47 @@ main {
   font-weight: normal;
   background-color: #211F1F;
   color: #FAFAFA;
-  height: 400px;
+  height: auto;
+  border-top: 1px solid #E56161;
 }
 
 .content.show {
   display: block;
+}
+
+/* Links in Content (for external links like 'SKIPT SKOOL') */
+.content a {
+  color: #FF6F6F;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  padding: 5px;
+  transition: color 0.2s ease-in-out;
+}
+
+.content a:hover {
+  color: #FFD1D1;
+  text-decoration: underline;
+}
+
+/* SVG Container for External Links */
+.svg-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.svg-image {
+  width: 350px;  /* Increased from 100px */
+  height: auto;
+  transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0.9;
+}
+
+.svg-image:hover {
+  transform: scale(1.1);
+  opacity: 1;
 }
 
 /* Footer */
@@ -184,11 +219,10 @@ footer {
   }
 
   .logo {
-    max-width: 100%; /* Adjust the percentage as needed */
+    max-width: 100%;
     height: auto;
     margin-right: .4em;
   }
-  
 
   .sidebar {
     grid-column: 1 / 2;
