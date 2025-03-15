@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     section5: {
       title: 'Gaijin Haiku',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+      content: 'SKIPT SKOOL'
     }
   };
 
