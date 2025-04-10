@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Select DOM elements
-  const containers = document.querySelectorAll('.collapsible-container');
+  const containers = document.querySelectorAll('.section-container');
   
   // Log to help debug
-  console.log('Found collapsible containers:', containers.length);
+  console.log('Found section containers:', containers.length);
 
   // Define imports data with titles and content
   const japanImports = {
@@ -58,12 +58,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const updateSections = (imports) => {
     containers.forEach((container, index) => {
       const sectionKey = `section${index + 1}`;
-      const button = container.querySelector('.collapsible');
-      const contentDiv = container.querySelector('.content');
+      const summary = container.querySelector('.section-summary');
+      const contentDiv = container.querySelector('.section-content');
 
-      // Update button text and content
+      // Update summary text and content
       if (imports[sectionKey]) {
-        button.textContent = imports[sectionKey].title;
+        summary.textContent = imports[sectionKey].title;
 
         // Special handling for Section 5
         if (sectionKey === 'section5') {
@@ -106,12 +106,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize with Japan imports
   updateSections(japanImports);
 
-  // Collapsible sections event listeners
-  containers.forEach((container) => {
-    const button = container.querySelector('.collapsible');
-    button.addEventListener('click', () => {
-      const content = button.nextElementSibling;
-      content.classList.toggle('show');
+  // Add event listener for sidebar toggle on mobile
+  const sidebarSummary = document.querySelector('.sidebar-summary');
+  if (sidebarSummary) {
+    sidebarSummary.addEventListener('click', () => {
+      console.log('Sidebar summary clicked');
     });
-  });
+  }
 });

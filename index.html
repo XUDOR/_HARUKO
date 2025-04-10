@@ -14,35 +14,52 @@
     </div>
   </header>
   
-  <nav class="sidebar">
-    <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Products</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
-  </nav>
+  <!-- Collapsible sidebar using details/summary -->
+  <div class="sidebar-container">
+    <details class="sidebar-details" open>
+      <summary class="sidebar-summary">Menu</summary>
+      <nav class="sidebar sidebar-content">
+        <ul>
+          <li><a href="#" class="nav-link">Home</a></li>
+          <li><a href="#" class="nav-link">About</a></li>
+          <li><a href="#" class="nav-link">Products</a></li>
+          <li><a href="#" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+    </details>
+  </div>
 
   <main>
-    <div class="collapsible-container" id="section1">
-      <button class="collapsible">Section 1</button>
-      <div class="content"></div>
+    <!-- Using details/summary instead of custom collapsible -->
+    <div class="section-container" id="section1">
+      <details class="section-details">
+        <summary class="section-summary">Section 1</summary>
+        <div class="section-content"></div>
+      </details>
     </div>
-    <div class="collapsible-container" id="section2">
-      <button class="collapsible">Section 2</button>
-      <div class="content"></div>
+    <div class="section-container" id="section2">
+      <details class="section-details">
+        <summary class="section-summary">Section 2</summary>
+        <div class="section-content"></div>
+      </details>
     </div>
-    <div class="collapsible-container" id="section3">
-      <button class="collapsible">Section 3</button>
-      <div class="content"></div>
+    <div class="section-container" id="section3">
+      <details class="section-details">
+        <summary class="section-summary">Section 3</summary>
+        <div class="section-content"></div>
+      </details>
     </div>
-    <div class="collapsible-container" id="section4">
-      <button class="collapsible">Section 4</button>
-      <div class="content"></div>
+    <div class="section-container" id="section4">
+      <details class="section-details">
+        <summary class="section-summary">Section 4</summary>
+        <div class="section-content"></div>
+      </details>
     </div>
-    <div class="collapsible-container" id="section5">
-      <button class="collapsible">Section 5</button>
-      <div class="content"></div>
+    <div class="section-container" id="section5">
+      <details class="section-details">
+        <summary class="section-summary">Section 5</summary>
+        <div class="section-content"></div>
+      </details>
     </div>
   </main>
 

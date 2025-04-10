@@ -17,7 +17,7 @@ body {
 /* Layout */
 body {
   display: grid;
-  grid-template-columns: 20% 1fr;
+  grid-template-columns: 18% 1fr; /* Slightly thinner sidebar */
   grid-template-rows: auto 1fr auto;
 }
 
@@ -60,47 +60,64 @@ header {
   white-space: nowrap;
 }
 
-/* Sidebar */
+/* Sidebar Container and Details/Summary */
+.sidebar-container {
+  grid-row: 2 / 3;
+  border-right: 1px solid #57030A;
+}
+
+.sidebar-details {
+  width: 100%;
+}
+
+.sidebar-summary {
+  background-color: #57030A;
+  color: white;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 200;
+  text-align: center;
+  list-style: none;
+}
+
+.sidebar-summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-summary::marker {
+  display: none;
+}
+
+.sidebar-summary:hover {
+  background-color: #E04C4C;
+  color: #330404;
+  transition: background-color 0.2s ease;
+}
+
+/* Sidebar Content */
 .sidebar {
   background-color: #1C0202;
   padding: 10px;
-  grid-row: 2 / 3;
 }
 
 .sidebar ul {
   list-style: none;
 }
 
-.sidebar a {
+.sidebar a.nav-link {
   text-decoration: none;
   color: white;
-  font-weight: normal;
+  font-weight: 300;
   display: block;
   padding: 12px;
   margin-bottom: 8px;
   background-color: #57030A;
 }
 
-.sidebar a:hover {
+.sidebar a.nav-link:hover {
   background-color: #E04C4C;
   color: #330404;
   transition: background-color 0.2s ease;
-}
-
-#toggle-button {
-  background-color: #E04C4C;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-family: 'Futura PT', sans-serif;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-left: auto;
-}
-
-#toggle-button:hover {
-  background-color: #FF6F6F;
 }
 
 /* Main */
@@ -110,11 +127,11 @@ main {
   grid-column: 2 / 3;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px; /* Slightly smaller gap */
 }
 
-/* Collapsible Sections */
-.collapsible-container {
+/* Section Containers */
+.section-container {
   background-color: #190808;
   color: white;
   border: 2px solid #E56161;
@@ -123,26 +140,39 @@ main {
   transition: all 0.3s ease;
 }
 
-.collapsible {
+/* Section Details/Summary Elements */
+.section-details {
+  width: 100%;
+}
+
+.section-summary {
   background-color: #190808;
   color: #D39990;
   cursor: pointer;
   padding: 12px;
-  border: none;
   width: 100%;
   text-align: left;
   font-size: 18px;
   font-weight: lighter;
   transition: background-color 0.3s ease;
+  list-style: none;
 }
 
-.collapsible:hover {
+.section-summary::-webkit-details-marker {
+  display: none;
+}
+
+.section-summary::marker {
+  display: none;
+}
+
+.section-summary:hover {
   background-color: #774D4D;
 }
 
-.content {
+/* Section Content */
+.section-content {
   padding: 15px;
-  display: none;
   font-weight: normal;
   background-color: #211F1F;
   color: #FAFAFA;
@@ -150,12 +180,8 @@ main {
   border-top: 1px solid #E56161;
 }
 
-.content.show {
-  display: block;
-}
-
 /* Links in Content (for external links like 'SKIPT SKOOL') */
-.content a {
+.section-content a {
   color: #FF6F6F;
   font-weight: bold;
   text-decoration: none;
@@ -164,7 +190,7 @@ main {
   transition: color 0.2s ease-in-out;
 }
 
-.content a:hover {
+.section-content a:hover {
   color: #FFD1D1;
   text-decoration: underline;
 }
@@ -178,7 +204,7 @@ main {
 }
 
 .svg-image {
-  width: 350px;  /* Increased from 100px */
+  width: 350px;
   height: auto;
   transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
   opacity: 0.9;
@@ -224,15 +250,17 @@ footer {
     margin-right: .4em;
   }
 
-  .sidebar {
+  .sidebar-container {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
+    border-right: none;
+    border-bottom: 1px solid #57030A;
   }
 
   main {
     grid-column: 1 / 2;
     grid-row: 3 / 4;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 15px;
   }
 }
