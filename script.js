@@ -116,11 +116,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       truckItem.className = 'product-item';
       truckItem.dataset.id = truck.id;
       
-      // Create fallback image path (for testing without actual images)
-      const imageSrc = truck.thumbnailUrl || `https://via.placeholder.com/200x150?text=${truck.id}`;
+      // Use the actual image path from the JSON
+      const imageSrc = truck.thumbnailUrl;
       
       truckItem.innerHTML = `
-        <img class="product-image" src="${imageSrc}" alt="${truck.alt}" onerror="this.src='https://via.placeholder.com/200x150?text=No+Image'">
+        <img class="product-image" src="${imageSrc}" alt="${truck.alt}" 
+             onerror="this.src='https://via.placeholder.com/200x150?text=${truck.id}'">
         <div class="product-title">${truck.alt}</div>
       `;
       
@@ -149,12 +150,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Get the container for the details
     const detailContainer = kTruckModal.querySelector('.product-detail-container');
     
-    // Create fallback image path (for testing without actual images)
-    const imageSrc = imageData.imageUrl || `https://via.placeholder.com/800x500?text=${imageData.id}`;
+    // Use the actual image path from the JSON for the full-size image
+    const imageSrc = imageData.imageUrl;
     
     // Build the detail HTML
     detailContainer.innerHTML = `
-      <img class="product-detail-image" src="${imageSrc}" alt="${imageData.alt}" onerror="this.src='https://via.placeholder.com/800x500?text=No+Image'">
+      <img class="product-detail-image" src="${imageSrc}" alt="${imageData.alt}" 
+           onerror="this.src='https://via.placeholder.com/800x500?text=${truckId}'">
       <h2 class="product-detail-title">${descData.title}</h2>
       
       <div class="product-detail-specs">
