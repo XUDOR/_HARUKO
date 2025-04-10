@@ -17,8 +17,13 @@ body {
 /* Layout */
 body {
   display: grid;
-  grid-template-columns: 18% 1fr; /* Slightly thinner sidebar */
+  grid-template-columns: 50px 1fr; /* Fixed pixel width - more predictable */
   grid-template-rows: auto 1fr auto;
+  transition: grid-template-columns 0.3s ease;
+}
+
+body.menu-expanded {
+  grid-template-columns: 70px 1fr; /* Expanded fixed pixel width */
 }
 
 /* Header */
@@ -64,6 +69,13 @@ header {
 .sidebar-container {
   grid-row: 2 / 3;
   border-right: 1px solid #57030A;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  width: 50px; /* Fixed pixel width */
+}
+
+.sidebar-container.expanded {
+  width: 70px; /* Fixed pixel width when expanded */
 }
 
 .sidebar-details {
@@ -73,11 +85,20 @@ header {
 .sidebar-summary {
   background-color: #57030A;
   color: white;
-  padding: 12px;
+  padding: 6px 0; /* Reduced padding */
   cursor: pointer;
   font-weight: 200;
   text-align: center;
   list-style: none;
+  font-size: 1em; /* Fixed pixel size */
+  
+  height: auto;
+  min-height: auto;
+}
+
+.sidebar-details[open] .sidebar-summary {
+  
+  transform: none;
 }
 
 .sidebar-summary::-webkit-details-marker {
@@ -97,7 +118,8 @@ header {
 /* Sidebar Content */
 .sidebar {
   background-color: #1C0202;
-  padding: 10px;
+  padding: 4px; /* Slightly more padding */
+  overflow: hidden;
 }
 
 .sidebar ul {
@@ -108,10 +130,19 @@ header {
   text-decoration: none;
   color: white;
   font-weight: 300;
-  display: block;
-  padding: 12px;
-  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 4px; /* More padding */
+  margin-bottom: 4px; /* Slightly larger margin */
   background-color: #57030A;
+  font-size: 13px; /* Fixed pixel size */
+  text-align: center;
+  min-height: 36px; /* Fixed height for link items */
+}
+
+.sidebar-details[open] a.nav-link {
+  padding: 8px 4px; /* Consistent padding when open */
 }
 
 .sidebar a.nav-link:hover {
@@ -134,7 +165,7 @@ main {
 .section-container {
   background-color: #190808;
   color: white;
-  border: 2px solid #E56161;
+  border: 1px solid #E56161;
   border-radius: 5px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -152,8 +183,8 @@ main {
   padding: 12px;
   width: 100%;
   text-align: left;
-  font-size: 18px;
-  font-weight: lighter;
+  font-size: 1.4em;
+  font-weight: 200;
   transition: background-color 0.3s ease;
   list-style: none;
 }
@@ -173,9 +204,10 @@ main {
 /* Section Content */
 .section-content {
   padding: 15px;
-  font-weight: normal;
+  font-weight: lighter;
+  font-size: 1em;
   background-color: #211F1F;
-  color: #FAFAFA;
+  color: #E0E2D7;
   height: auto;
   border-top: 1px solid #E56161;
 }
@@ -232,6 +264,10 @@ footer {
     grid-template-rows: auto auto 1fr auto;
   }
 
+  body.menu-expanded {
+    grid-template-columns: 1fr; /* No change on mobile */
+  }
+
   header {
     flex-direction: column;
     align-items: flex-start;
@@ -255,6 +291,26 @@ footer {
     grid-row: 2 / 3;
     border-right: none;
     border-bottom: 1px solid #57030A;
+    width: 100%; /* Full width on mobile */
+  }
+
+  .sidebar-container.expanded {
+    width: 100%; /* Still full width on mobile when expanded */
+  }
+
+  .sidebar-summary {
+    writing-mode: horizontal-tb; /* Horizontal text on mobile */
+    transform: none;
+    font-size: 16px; /* Larger font on mobile */
+    padding: 10px; /* More padding on mobile */
+    min-height: auto;
+  }
+
+  .sidebar a.nav-link {
+    font-size: 15px; /* Larger font on mobile */
+    padding: 10px; /* More padding on mobile */
+    justify-content: flex-start; /* Left align on mobile */
+    min-height: auto;
   }
 
   main {

@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Select DOM elements
   const containers = document.querySelectorAll('.section-container');
+  const sidebar = document.querySelector('.sidebar-container');
+  const sidebarDetails = document.querySelector('.sidebar-details');
+  const body = document.body;
   
   // Log to help debug
   console.log('Found section containers:', containers.length);
@@ -106,11 +109,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize with Japan imports
   updateSections(japanImports);
 
-  // Add event listener for sidebar toggle on mobile
-  const sidebarSummary = document.querySelector('.sidebar-summary');
-  if (sidebarSummary) {
-    sidebarSummary.addEventListener('click', () => {
-      console.log('Sidebar summary clicked');
+  // Add event listener for sidebar toggle
+  if (sidebarDetails) {
+    sidebarDetails.addEventListener('toggle', () => {
+      if (sidebarDetails.open) {
+        console.log('Sidebar opened');
+        sidebar.classList.add('expanded');
+        body.classList.add('menu-expanded');
+      } else {
+        console.log('Sidebar closed');
+        sidebar.classList.remove('expanded');
+        body.classList.remove('menu-expanded');
+      }
     });
   }
 });
