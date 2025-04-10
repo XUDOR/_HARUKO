@@ -1,0 +1,32 @@
+[
+  {
+    "id": "kt001",
+    "imageUrl": "./assets/ktrucks/kt001.jpg",
+    "thumbnailUrl": "./assets/ktrucks/kt001_thumb.jpg",
+    "alt": "Suzuki Carry Mini Truck"
+  },
+  {
+    "id": "kt002",
+    "imageUrl": "./assets/ktrucks/kt002.jpg",
+    "thumbnailUrl": "./assets/ktrucks/kt002_thumb.jpg",
+    "alt": "Honda Acty Mini Truck"
+  },
+  {
+    "id": "kt003",
+    "imageUrl": "./assets/ktrucks/kt003.jpg",
+    "thumbnailUrl": "./assets/ktrucks/kt003_thumb.jpg",
+    "alt": "Daihatsu Hijet Mini Truck"
+  },
+  {
+    "id": "kt004",
+    "imageUrl": "./assets/ktrucks/kt004.jpg",
+    "thumbnailUrl": "./assets/ktrucks/kt004_thumb.jpg",
+    "alt": "Mitsubishi Minicab Mini Truck"
+  },
+  {
+    "id": "kt005",
+    "imageUrl": "./assets/ktrucks/kt005.jpg",
+    "thumbnailUrl": "./assets/ktrucks/kt005_thumb.jpg",
+    "alt": "Subaru Sambar Mini Truck"
+  }
+]

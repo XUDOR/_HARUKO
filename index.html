@@ -44,10 +44,10 @@
             <details class="submenu-details">
               <summary class="nav-link">Products</summary>
               <div class="submenu">
-                <a href="#" class="submenu-link">K Trucks</a>
-                <a href="#" class="submenu-link">Kotatsu</a>
-                <a href="#" class="submenu-link">Anime</a>
-                <a href="#" class="submenu-link">Japanese Store</a>
+                <a href="#section1" class="submenu-link">K Trucks</a>
+                <a href="#section2" class="submenu-link">Kotatsu</a>
+                <a href="#section3" class="submenu-link">Anime</a>
+                <a href="#section4" class="submenu-link">Japanese Store</a>
               </div>
             </details>
           </li>
@@ -67,34 +67,62 @@
   </div>
 
   <main>
-    <!-- Using details/summary instead of custom collapsible -->
+    <!-- K Trucks Section -->
     <div class="section-container" id="section1">
       <details class="section-details">
-        <summary class="section-summary">Section 1</summary>
-        <div class="section-content"></div>
+        <summary class="section-summary">K Trucks</summary>
+        <div class="section-content">
+          <p>Browse our selection of compact Japanese Kei trucks, perfect for urban deliveries and small businesses. Features include excellent fuel economy and easy maneuverability.</p>
+          
+          <!-- Horizontal scrollable container -->
+          <div class="product-scroll-container">
+            <div class="product-grid" id="ktrucks-grid">
+              <!-- Products will be dynamically loaded here -->
+              <div class="loading-indicator">Loading K Trucks...</div>
+            </div>
+          </div>
+          
+          <!-- Product Detail Modal -->
+          <div class="product-modal" id="ktruck-modal">
+            <div class="modal-content">
+              <span class="close-modal">&times;</span>
+              <div class="product-detail-container">
+                <!-- Product details will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
       </details>
     </div>
+    
+    <!-- Kotatsu Section -->
     <div class="section-container" id="section2">
       <details class="section-details">
-        <summary class="section-summary">Section 2</summary>
+        <summary class="section-summary">Kotatsu</summary>
         <div class="section-content"></div>
       </details>
     </div>
+    
+    <!-- Anime Section -->
     <div class="section-container" id="section3">
       <details class="section-details">
-        <summary class="section-summary">Section 3</summary>
+        <summary class="section-summary">Anime</summary>
         <div class="section-content"></div>
       </details>
     </div>
+    
+    <!-- Japanese Store Section -->
     <div class="section-container" id="section4">
       <details class="section-details">
-        <summary class="section-summary">Section 4</summary>
+        <summary class="section-summary">Japanese Store</summary>
         <div class="section-content"></div>
       </details>
     </div>
+    
+    <!-- Gaijin Haiku Section -->
     <div class="section-container" id="section5">
       <details class="section-details">
-        <summary class="section-summary">Section 5</summary>
+        <summary class="section-summary">Gaijin Haiku</summary>
         <div class="section-content"></div>
       </details>
     </div>
