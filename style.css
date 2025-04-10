@@ -26,6 +26,10 @@ body.menu-expanded {
   grid-template-columns: 70px 1fr; /* Expanded fixed pixel width */
 }
 
+body.submenu-expanded {
+  grid-template-columns: 300px 1fr; /* Further expanded for submenu */
+}
+
 /* Header */
 header {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -75,7 +79,11 @@ header {
 }
 
 .sidebar-container.expanded {
-  width: 70px; /* Fixed pixel width when expanded */
+  width: 85px; /* Fixed pixel width when expanded */
+}
+
+.sidebar-container.submenu-expanded {
+  width: 300px; /* Width when submenu is expanded */
 }
 
 .sidebar-details {
@@ -91,13 +99,11 @@ header {
   text-align: center;
   list-style: none;
   font-size: 1em; /* Fixed pixel size */
-  
   height: auto;
   min-height: auto;
 }
 
 .sidebar-details[open] .sidebar-summary {
-  
   transform: none;
 }
 
@@ -126,7 +132,37 @@ header {
   list-style: none;
 }
 
-.sidebar a.nav-link {
+/* Nav Link Summary Styling */
+.submenu-details {
+  width: 100%;
+}
+
+.submenu-details::-webkit-details-marker,
+.submenu-details::marker {
+  display: none;
+}
+
+.submenu-details summary.nav-link {
+  padding-right: 20px; /* Make room for custom indicator */
+  position: relative;
+}
+
+.submenu-details summary.nav-link::after {
+  content: '+';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #FAFAFA;
+}
+
+.submenu-details[open] summary.nav-link::after {
+  content: '-';
+}
+
+/* Nav Link Styling */
+.nav-link {
   text-decoration: none;
   color: white;
   font-weight: 300;
@@ -139,16 +175,51 @@ header {
   font-size: 13px; /* Fixed pixel size */
   text-align: center;
   min-height: 36px; /* Fixed height for link items */
+  cursor: pointer;
+  list-style: none;
 }
 
-.sidebar-details[open] a.nav-link {
-  padding: 8px 4px; /* Consistent padding when open */
+.submenu-expanded .nav-link {
+  justify-content: flex-start;
+  padding-left: 15px;
 }
 
-.sidebar a.nav-link:hover {
+.nav-link:hover {
   background-color: #E04C4C;
   color: #330404;
   transition: background-color 0.2s ease;
+}
+
+/* Submenu Styling */
+.submenu {
+  background-color: #2A0606;
+  margin-bottom: 4px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.submenu-details[open] .submenu {
+  max-height: 500px; /* Large enough to accommodate all submenu items */
+}
+
+.submenu-link {
+  display: block;
+  padding: 8px 8px 8px 25px;
+  text-decoration: none;
+  color: #E0E0E0;
+  font-size: 12px;
+  border-bottom: 1px solid #3A0A0A;
+  transition: background-color 0.2s ease;
+}
+
+.submenu-link:hover {
+  background-color: #4A1010;
+  color: #FFFFFF;
+}
+
+.submenu-link:last-child {
+  border-bottom: none;
 }
 
 /* Main */
@@ -264,7 +335,8 @@ footer {
     grid-template-rows: auto auto 1fr auto;
   }
 
-  body.menu-expanded {
+  body.menu-expanded,
+  body.submenu-expanded {
     grid-template-columns: 1fr; /* No change on mobile */
   }
 
@@ -294,23 +366,29 @@ footer {
     width: 100%; /* Full width on mobile */
   }
 
-  .sidebar-container.expanded {
+  .sidebar-container.expanded,
+  .sidebar-container.submenu-expanded {
     width: 100%; /* Still full width on mobile when expanded */
   }
 
   .sidebar-summary {
-    writing-mode: horizontal-tb; /* Horizontal text on mobile */
-    transform: none;
     font-size: 16px; /* Larger font on mobile */
     padding: 10px; /* More padding on mobile */
     min-height: auto;
+    text-align: left;
   }
-
-  .sidebar a.nav-link {
+  
+  .nav-link {
     font-size: 15px; /* Larger font on mobile */
     padding: 10px; /* More padding on mobile */
     justify-content: flex-start; /* Left align on mobile */
     min-height: auto;
+    padding-left: 15px;
+  }
+  
+  .submenu-link {
+    padding: 8px 8px 8px 30px; /* More indentation on mobile */
+    font-size: 14px;
   }
 
   main {

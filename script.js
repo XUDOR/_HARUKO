@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const containers = document.querySelectorAll('.section-container');
   const sidebar = document.querySelector('.sidebar-container');
   const sidebarDetails = document.querySelector('.sidebar-details');
+  const submenuDetails = document.querySelectorAll('.submenu-details');
   const body = document.body;
   
   // Log to help debug
@@ -118,6 +119,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize with Japan imports
   updateSections(japanImports);
 
+  // Function to close all submenus
+  const closeAllSubmenus = () => {
+    submenuDetails.forEach(submenu => {
+      submenu.open = false;
+    });
+    sidebar.classList.remove('submenu-expanded');
+    body.classList.remove('submenu-expanded');
+  };
+
   // Add event listener for sidebar toggle
   if (sidebarDetails) {
     sidebarDetails.addEventListener('toggle', () => {
@@ -128,8 +138,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         console.log('Sidebar closed');
         sidebar.classList.remove('expanded');
+        sidebar.classList.remove('submenu-expanded');
         body.classList.remove('menu-expanded');
+        body.classList.remove('submenu-expanded');
+        // Close all submenus when sidebar is closed
+        closeAllSubmenus();
       }
+    });
+  }
+
+  // Add event listeners for submenu toggles
+  if (submenuDetails.length > 0) {
+    submenuDetails.forEach(submenu => {
+      submenu.addEventListener('toggle', (event) => {
+        event.stopPropagation(); // Prevent event from bubbling up to sidebar-details
+        
+        if (submenu.open) {
+          console.log('Submenu opened');
+          
+          // Close other open submenus
+          submenuDetails.forEach(other => {
+            if (other !== submenu && other.open) {
+              other.open = false;
+            }
+          });
+          
+          // Expand sidebar further for submenu
+          sidebar.classList.add('submenu-expanded');
+          body.classList.add('submenu-expanded');
+        } else {
+          console.log('Submenu closed');
+          
+          // Check if any other submenus are open
+          const anySubmenuOpen = Array.from(submenuDetails).some(detail => detail.open);
+          
+          if (!anySubmenuOpen) {
+            // If no submenus are open, collapse back to regular expanded state
+            sidebar.classList.remove('submenu-expanded');
+            body.classList.remove('submenu-expanded');
+          }
+        }
+      });
     });
   }
 });
