@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // Fetch external links
-  let externalLink = '#';
-  let externalSvg = 'assets/SKPTSKL-T1.svg'; // Default to direct path even if fetch fails
+  let externalLink = 'https://skiptskool.onrender.com/'; // Hardcoded fallback
+  let externalSvg = './assets/SKPTSKL-T1.svg'; // Default to direct path even if fetch fails
 
   try {
     console.log('Attempting to fetch links.json...');
@@ -47,8 +47,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await response.json();
     console.log('Successfully loaded links.json:', data);
     
-    externalLink = data.skiptSkool || '#';
-    externalSvg = data.svgImage || 'assets/SKPTSKL-T1.svg';
+    // Verify that we're getting the correct data
+    console.log('Raw skiptSkool value:', data.skiptSkool);
+    
+    // Only override if the values exist and aren't empty
+    if (data.skiptSkool && data.skiptSkool.trim() !== '') {
+      externalLink = data.skiptSkool;
+    }
+    
+    if (data.svgImage && data.svgImage.trim() !== '') {
+      externalSvg = data.svgImage;
+    }
     
     console.log('External link set to:', externalLink);
     console.log('SVG image path set to:', externalSvg);
@@ -89,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           };
           testImg.src = externalSvg;
           
-          // Set initial HTML
+          // Set initial HTML with verified link
           contentDiv.innerHTML = `
             <p><a href="${externalLink}" target="_blank" rel="noopener noreferrer">SKIPT SKOOL</a></p>
             <div class="svg-container">
