@@ -32,7 +32,7 @@ app.get('/api/data/:filename', (req, res) => {
     }
   });
 });
-
+/* -------- this was commented out ---then the server started .... 
 // POST: Handle fake signup (no database)
 app.post('/api/signup', (req, res) => {
   const { name, email } = req.body;
@@ -55,7 +55,7 @@ app.post('/api/signup', (req, res) => {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
+*/
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at: http://localhost:${PORT}`);
