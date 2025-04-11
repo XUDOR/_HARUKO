@@ -8,7 +8,6 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: normal;
-  display: flex;
   min-height: 100vh;
   background-color: #0C0101;
   color: #FAFAFA;
@@ -17,23 +16,21 @@ body {
 /* Layout */
 body {
   display: grid;
-  grid-template-columns: 50px 1fr; /* Fixed pixel width - more predictable */
+  grid-template-columns: 50px 1fr;
   grid-template-rows: auto 1fr auto;
   transition: grid-template-columns 0.3s ease;
 }
 
 body.menu-expanded {
-  grid-template-columns: 70px 1fr; /* Expanded fixed pixel width */
+  grid-template-columns: 70px 1fr;
 }
 
 body.submenu-expanded {
-  grid-template-columns: 300px 1fr; /* Further expanded for submenu */
+  grid-template-columns: 300px 1fr;
 }
 
 /* Header */
 header {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: lighter;
   background-color: #0C0101;
   color: #E28181;
   padding: 15px 20px;
@@ -44,7 +41,6 @@ header {
   grid-column: 1 / 3;
 }
 
-/* Logo and Title Adjustments */
 .logo-title {
   display: flex;
   align-items: center;
@@ -69,21 +65,21 @@ header {
   white-space: nowrap;
 }
 
-/* Sidebar Container and Details/Summary */
+/* Sidebar */
 .sidebar-container {
   grid-row: 2 / 3;
   border-right: 1px solid #57030A;
   overflow: hidden;
   transition: width 0.3s ease;
-  width: 50px; /* Fixed pixel width */
+  width: 50px;
 }
 
 .sidebar-container.expanded {
-  width: 70px; /* Fixed pixel width when expanded */
+  width: 75px;
 }
 
 .sidebar-container.submenu-expanded {
-  width: 300px; /* Width when submenu is expanded */
+  width: 300px;
 }
 
 .sidebar-details {
@@ -93,24 +89,19 @@ header {
 .sidebar-summary {
   background-color: #57030A;
   color: white;
-  padding: 6px 0; /* Reduced padding */
+  padding: 6px 0;
   cursor: pointer;
   font-weight: 200;
   text-align: center;
   list-style: none;
-  font-size: 1em; /* Fixed pixel size */
-  height: auto;
-  min-height: auto;
+  font-size: 1em;
 }
 
 .sidebar-details[open] .sidebar-summary {
   transform: none;
 }
 
-.sidebar-summary::-webkit-details-marker {
-  display: none;
-}
-
+.sidebar-summary::-webkit-details-marker,
 .sidebar-summary::marker {
   display: none;
 }
@@ -118,21 +109,21 @@ header {
 .sidebar-summary:hover {
   background-color: #E04C4C;
   color: #330404;
-  transition: background-color 0.2s ease;
 }
 
-/* Sidebar Content */
 .sidebar {
   background-color: #1C0202;
-  padding: 4px; /* Slightly more padding */
+  padding: 4px;
   overflow: hidden;
 }
 
 .sidebar ul {
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-/* Nav Link Summary Styling */
+/* Nav Links */
 .submenu-details {
   width: 100%;
 }
@@ -143,7 +134,7 @@ header {
 }
 
 .submenu-details summary.nav-link {
-  padding-right: 20px; /* Make room for custom indicator */
+  padding-right: 20px;
   position: relative;
 }
 
@@ -161,22 +152,20 @@ header {
   content: '-';
 }
 
-/* Nav Link Styling */
 .nav-link {
-  text-decoration: none;
-  color: white;
-  font-weight: 300;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px 4px; /* More padding */
-  margin-bottom: 4px; /* Slightly larger margin */
+  padding: 8px 4px;
+  margin-bottom: 4px;
   background-color: #57030A;
-  font-size: 13px; /* Fixed pixel size */
+  font-size: 13px;
   text-align: center;
-  min-height: 36px; /* Fixed height for link items */
+  min-height: 36px;
   cursor: pointer;
-  list-style: none;
+  text-decoration: none;
+  color: white;
+  font-weight: 300;
 }
 
 .submenu-expanded .nav-link {
@@ -187,10 +176,9 @@ header {
 .nav-link:hover {
   background-color: #E04C4C;
   color: #330404;
-  transition: background-color 0.2s ease;
 }
 
-/* Submenu Styling */
+/* Submenu */
 .submenu {
   background-color: #2A0606;
   margin-bottom: 4px;
@@ -200,17 +188,16 @@ header {
 }
 
 .submenu-details[open] .submenu {
-  max-height: 500px; /* Large enough to accommodate all submenu items */
+  max-height: 500px;
 }
 
 .submenu-link {
   display: block;
-  padding: 8px 8px 8px 25px;
+  padding: 8px 25px; /* Adjusted padding */
   text-decoration: none;
   color: #E0E0E0;
   font-size: 12px;
   border-bottom: 1px solid #3A0A0A;
-  transition: background-color 0.2s ease;
 }
 
 .submenu-link:hover {
@@ -222,17 +209,16 @@ header {
   border-bottom: none;
 }
 
-/* Main */
+/* Main Content */
 main {
   padding: 20px;
   grid-row: 2 / 3;
   grid-column: 2 / 3;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px; /* Slightly smaller gap */
+  gap: 16px;
 }
 
-/* Section Containers */
 .section-container {
   background-color: #190808;
   color: white;
@@ -242,7 +228,6 @@ main {
   transition: all 0.3s ease;
 }
 
-/* Section Details/Summary Elements */
 .section-details {
   width: 100%;
 }
@@ -256,14 +241,9 @@ main {
   text-align: left;
   font-size: 1.4em;
   font-weight: 200;
-  transition: background-color 0.3s ease;
-  list-style: none;
 }
 
-.section-summary::-webkit-details-marker {
-  display: none;
-}
-
+.section-summary::-webkit-details-marker,
 .section-summary::marker {
   display: none;
 }
@@ -272,7 +252,6 @@ main {
   background-color: #774D4D;
 }
 
-/* Section Content */
 .section-content {
   padding: 15px;
   font-weight: lighter;
@@ -283,14 +262,12 @@ main {
   border-top: 1px solid #E56161;
 }
 
-/* Links in Content (for external links like 'SKIPT SKOOL') */
 .section-content a {
   color: #FF6F6F;
   font-weight: bold;
   text-decoration: none;
   display: inline-block;
   padding: 5px;
-  transition: color 0.2s ease-in-out;
 }
 
 .section-content a:hover {
@@ -298,7 +275,7 @@ main {
   text-decoration: underline;
 }
 
-/* SVG Container for External Links */
+/* SVG */
 .svg-container {
   margin-top: 15px;
   display: flex;
@@ -318,7 +295,7 @@ main {
   opacity: 1;
 }
 
-/* Product Scroll Container */
+/* Product Display */
 .product-scroll-container {
   width: 100%;
   overflow-x: auto;
@@ -342,7 +319,6 @@ main {
   border-radius: 4px;
 }
 
-/* Product Grid */
 .product-grid {
   display: flex;
   gap: 15px;
@@ -350,7 +326,6 @@ main {
   min-width: max-content;
 }
 
-/* Product Item */
 .product-item {
   width: 200px;
   height: 200px;
@@ -372,9 +347,10 @@ main {
 .product-image {
   width: 100%;
   height: 150px;
-  object-fit: contain; /* Changed from cover to contain to display full truck images */
-  background-color: #211F1F; /* Slightly lighter background to make white trucks visible */
-  padding: 5px; /* Added padding to prevent trucks from touching edges */
+  object-fit: contain;
+  background-color: #211F1F;
+  padding: 5px;
+  display: block; /* Ensure image is a block-level element */
 }
 
 .product-title {
@@ -443,11 +419,11 @@ main {
 .product-detail-image {
   width: 100%;
   max-height: 400px;
-  object-fit: contain; /* Ensure image is fully visible */
+  object-fit: contain;
   border: 1px solid #57030A;
   border-radius: 3px;
-  background-color: #211F1F; /* Consistent background color */
-  padding: 10px; /* Added padding */
+  background-color: #211F1F;
+  padding: 10px;
 }
 
 .product-detail-title {
@@ -504,7 +480,7 @@ footer {
 
   body.menu-expanded,
   body.submenu-expanded {
-    grid-template-columns: 1fr; /* No change on mobile */
+    grid-template-columns: 1fr;
   }
 
   header {
@@ -521,7 +497,6 @@ footer {
 
   .logo {
     max-width: 100%;
-    height: auto;
     margin-right: .4em;
   }
 
@@ -530,31 +505,29 @@ footer {
     grid-row: 2 / 3;
     border-right: none;
     border-bottom: 1px solid #57030A;
-    width: 100%; /* Full width on mobile */
+    width: 100%;
   }
 
   .sidebar-container.expanded,
   .sidebar-container.submenu-expanded {
-    width: 100%; /* Still full width on mobile when expanded */
+    width: 100%;
   }
 
   .sidebar-summary {
-    font-size: 16px; /* Larger font on mobile */
-    padding: 10px; /* More padding on mobile */
-    min-height: auto;
+    font-size: 16px;
+    padding: 10px;
     text-align: left;
   }
   
   .nav-link {
-    font-size: 15px; /* Larger font on mobile */
-    padding: 10px; /* More padding on mobile */
-    justify-content: flex-start; /* Left align on mobile */
-    min-height: auto;
+    font-size: 15px;
+    padding: 10px;
+    justify-content: flex-start;
     padding-left: 15px;
   }
   
   .submenu-link {
-    padding: 8px 8px 8px 30px; /* More indentation on mobile */
+    padding: 8px 8px 8px 30px;
     font-size: 14px;
   }
 

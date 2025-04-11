@@ -1,61 +1,78 @@
 document.addEventListener('DOMContentLoaded', initializeApp);
 
+// Global variable for app data - accessible across functions
+let appData = {};
+
 async function initializeApp() {
   console.log('initializeApp: Application initialization started.');
 
+  // Select DOM elements
   const elements = selectDOMelements();
   if (!elements) {
     console.error('initializeApp: Failed to select all required DOM elements.');
-    return; // Stop execution if essential elements are missing
+    displayError(null, 'Failed to initialize application.');
+    return;
   }
 
-  const appData = initializeAppData();
+  // Initialize app data structure
+  appData = initializeAppData();
 
   try {
-    await loadInitialData(appData, elements);
-    renderInitialUI(appData, elements);
+    // Load data from API
+    await loadInitialData(appData);
+    
+    // Set up the initial UI
+    renderInitialUI(elements, appData);
+    
+    // Set up interactive elements
     setupEventListeners(elements, appData);
 
-    console.log('initializeApp: Application initialization completed successfully.');
+    console.log('initializeApp: Application initialized successfully.');
   } catch (error) {
-    console.error('initializeApp: An error occurred during initialization:', error);
+    console.error('initializeApp: Error during initialization:', error);
     displayError(elements.kTrucksGrid, 'Failed to load initial data.');
   }
 }
 
+/**
+ * Select all required DOM elements
+ * @returns {Object|null} Object with DOM elements or null if any elements missing
+ */
 function selectDOMelements() {
   try {
     const containers = document.querySelectorAll('.section-container');
     const sidebar = document.querySelector('.sidebar-container');
     const sidebarDetails = document.querySelector('.sidebar-details');
-    const submenuDetails = Array.from(document.querySelectorAll('.submenu-details')); // Convert NodeList to Array
+    const submenuDetails = Array.from(document.querySelectorAll('.submenu-details'));
     const body = document.body;
     const kTrucksGrid = document.getElementById('ktrucks-grid');
     const kTruckModal = document.getElementById('ktruck-modal');
 
-    if (!containers.length || !sidebar || !sidebarDetails || !submenuDetails.length || !body || !kTrucksGrid || !kTruckModal) {
-      console.warn('selectDOMelements: One or more DOM elements were not found.');
+    if (!containers.length || !sidebar || !sidebarDetails || !submenuDetails.length || !body) {
+      console.warn('selectDOMelements: Basic elements not found.');
       return null;
     }
 
-    console.log('selectDOMelements: DOM elements selected successfully.');
     return {
       containers,
       sidebar,
       sidebarDetails,
       submenuDetails,
       body,
-      kTrucksGrid,
-      kTruckModal,
+      kTrucksGrid: kTrucksGrid || null,
+      kTruckModal: kTruckModal || null,
     };
   } catch (error) {
-    console.error('selectDOMelements: Error selecting DOM elements:', error);
+    console.error('selectDOMelements: Error selecting elements:', error);
     return null;
   }
 }
 
+/**
+ * Initialize application data structure
+ * @returns {Object} Initial data structure
+ */
 function initializeAppData() {
-  console.log('initializeAppData: Initializing application data.');
   return {
     kTruckImages: [],
     kTruckDescriptions: [],
@@ -64,30 +81,43 @@ function initializeAppData() {
   };
 }
 
-async function loadInitialData(appData, elements) {
-  console.log('loadInitialData: Loading initial data.');
-
+/**
+ * Load initial data from API endpoints
+ * @param {Object} appData Data object to populate
+ * @returns {Promise} Resolves when all data is loaded
+ */
+async function loadInitialData(appData) {
   try {
-    appData.kTruckImages = await fetchData('/api/data/ktruckimage.json');
-    console.log('loadInitialData: K Truck images loaded:', appData.kTruckImages);
+    // Load data in parallel for better performance
+    const [kTruckImages, kTruckDescriptions, linksData] = await Promise.all([
+      fetchData('/api/data/ktruckimage.json'),
+      fetchData('/api/data/ktruckdescription.json'),
+      fetchData('/api/data/links.json')
+    ]);
 
-    appData.kTruckDescriptions = await fetchData('/api/data/ktruckdescription.json');
-    console.log('loadInitialData: K Truck descriptions loaded:', appData.kTruckDescriptions);
-
-    const linksData = await fetchData('/api/data/links.json');
-    appData.externalLink = linksData.skiptSkool;
-    appData.externalSvg = linksData.svgImage;
-    console.log('loadInitialData: Links data loaded:', linksData);
-
+    // Populate app data
+    appData.kTruckImages = kTruckImages;
+    appData.kTruckDescriptions = kTruckDescriptions;
+    
+    // Only update if data exists
+    if (linksData && linksData.skiptSkool) {
+      appData.externalLink = linksData.skiptSkool;
+    }
+    if (linksData && linksData.svgImage) {
+      appData.externalSvg = linksData.svgImage;
+    }
   } catch (error) {
-    console.error('loadInitialData: Error loading initial data:', error);
-    throw error; // Propagate the error to initializeApp
+    console.error('loadInitialData: Error:', error);
+    throw error;
   }
 }
 
-function renderInitialUI(appData, elements) {
-  console.log('renderInitialUI: Rendering initial user interface.');
-
+/**
+ * Render initial UI components
+ * @param {Object} elements DOM elements
+ * @param {Object} appData Application data
+ */
+function renderInitialUI(elements, appData) {
   const initialSections = {
     section1: { title: 'K Trucks', content: 'Browse our selection of compact Japanese Kei trucks, perfect for urban deliveries and small businesses. Features include excellent fuel economy and easy maneuverability.' },
     section2: { title: 'Kotatsu', content: 'Authentic Japanese Kotatsu tables, combining comfort and functionality. Perfect for keeping warm during winter while enjoying meals or relaxing.' },
@@ -97,227 +127,350 @@ function renderInitialUI(appData, elements) {
   };
 
   updateSections(elements.containers, initialSections, appData);
-  populateKTrucksGrid(elements.kTrucksGrid, appData.kTruckImages);
-
-  console.log('renderInitialUI: Initial UI rendering completed.');
+  
+  // Populate K Trucks grid if it exists
+  if (elements.kTrucksGrid) {
+    populateKTrucksGrid(elements.kTrucksGrid, appData.kTruckImages);
+  }
 }
 
-function updateSections(containers, imports, appData) {
-  console.log('updateSections: Updating sections with data:', imports);
-
+/**
+ * Update content sections
+ * @param {NodeList} containers Section container elements
+ * @param {Object} sections Section content data
+ * @param {Object} appData Application data
+ */
+function updateSections(containers, sections, appData) {
+  if (!containers || !sections || !appData) return;
+  
   containers.forEach((container, index) => {
     const sectionKey = `section${index + 1}`;
-    const summary = container.querySelector('.section-summary');
-    const contentDiv = container.querySelector('.section-content');
+    const section = sections[sectionKey];
 
-    if (imports[sectionKey]) {
-      console.log(`updateSections: Processing section: ${sectionKey}`);
-      if (summary) {
-        summary.textContent = imports[sectionKey].title;
-      } else {
-        console.warn(`updateSections: Summary element not found for section: ${sectionKey}`);
+    if (section) {
+      const summaryElement = container.querySelector('.section-summary');
+      if (summaryElement) {
+        summaryElement.textContent = section.title;
       }
-
+      
+      const contentDiv = container.querySelector('.section-content');
       if (contentDiv) {
         if (sectionKey === 'section5') {
-          renderGaijinHaikuSection(contentDiv, appData);
+          renderGaijinHaiku(contentDiv, appData);
         } else if (sectionKey === 'section1') {
-          renderKTrucksSection(contentDiv, imports[sectionKey].content);
+          renderKTrucks(contentDiv, section.content);
         } else {
-          contentDiv.innerHTML = `<p>${imports[sectionKey].content}</p>`;
+          contentDiv.innerHTML = `<p>${section.content}</p>`;
         }
-      } else {
-        console.warn(`updateSections: Content div not found for section: ${sectionKey}`);
       }
-    } else {
-      console.warn(`updateSections: No data found for section: ${sectionKey}`);
     }
   });
 }
 
-function renderGaijinHaikuSection(contentDiv, appData) {
-  console.log('renderGaijinHaikuSection: Rendering Gaijin Haiku section.');
-
-  const testImg = new Image();
-  testImg.onload = () => console.log(`renderGaijinHaikuSection: SVG loaded successfully: ${appData.externalSvg}`);
-  testImg.onerror = (e) => {
-    const errorMessage = `Failed to load SVG: ${appData.externalSvg}`;
-    displayError(contentDiv, errorMessage);
-    contentDiv.innerHTML = `<p><a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer">SKIPT SKOOL</a></p><div class="svg-container"><a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer"><p style="color: #E04C4C; font-weight: bold;">SKIPT SKOOL</p></a></div>`;
+/**
+ * Render Gaijin Haiku section
+ * @param {HTMLElement} contentDiv Section content container
+ * @param {Object} appData Application data
+ */
+function renderGaijinHaiku(contentDiv, appData) {
+  if (!contentDiv || !appData) return;
+  
+  // Create image object
+  const img = new Image();
+  img.src = appData.externalSvg;
+  
+  // Handle image load error
+  img.onerror = () => {
+    displayError(contentDiv, 'Failed to load SVG.');
+    contentDiv.innerHTML = `
+      <p><a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer">SKIPT SKOOL</a></p>
+      <div class="svg-container">
+        <a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer">
+          <p style="color: #E04C4C; font-weight: bold;">SKIPT SKOOL</p>
+        </a>
+      </div>
+    `;
   };
-  testImg.src = appData.externalSvg;
-
-  contentDiv.innerHTML = `<p><a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer">SKIPT SKOOL</a></p><div class="svg-container"><a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer"><img src="${appData.externalSvg}" alt="SKIPT SKOOL Logo" class="svg-image" onerror="this.onerror=null; console.error('Image failed to load'); this.style.display='none'; this.parentNode.innerHTML='<p style=\\'color: #E04C4C; font-weight: bold;\\'>SKIPT SKOOL</p>';"></a></div>`;
+  
+  // Handle successful image load
+  img.onload = () => {
+    contentDiv.innerHTML = `
+      <p><a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer">SKIPT SKOOL</a></p>
+      <div class="svg-container">
+        <a href="${appData.externalLink}" target="_blank" rel="noopener noreferrer">
+          <img src="${appData.externalSvg}" alt="SKIPT SKOOL Logo" class="svg-image">
+        </a>
+      </div>
+    `;
+  };
 }
 
-function renderKTrucksSection(contentDiv, content) {
-  console.log('renderKTrucksSection: Rendering K Trucks section.');
-  contentDiv.innerHTML = `<p>${content}</p><div class="product-scroll-container"><div class="product-grid" id="ktrucks-grid"><div class="loading-indicator">Loading K Trucks...</div></div></div><div class="product-modal" id="ktruck-modal"><div class="modal-content"><span class="close-modal">&times;</span><div class="product-detail-container"></div></div></div>`;
+/**
+ * Render K Trucks section
+ * @param {HTMLElement} contentDiv Section content container
+ * @param {string} content Section text content
+ */
+function renderKTrucks(contentDiv, content) {
+  if (!contentDiv) return;
+  
+  contentDiv.innerHTML = `
+    <p>${content}</p>
+    <div class="product-scroll-container">
+      <div class="product-grid" id="ktrucks-grid"></div>
+    </div>
+    <div class="product-modal" id="ktruck-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="product-detail-container"></div>
+      </div>
+    </div>
+  `;
 }
 
-function populateKTrucksGrid(kTrucksGrid, kTruckImages) {
-  console.log('populateKTrucksGrid: Populating K Trucks grid.');
-
-  if (!kTrucksGrid) {
-    console.warn('populateKTrucksGrid: kTrucksGrid element is null. Cannot populate grid.');
+/**
+ * Populate K Trucks grid with truck data
+ * @param {HTMLElement} gridElement Grid container element
+ * @param {Array} trucks Truck data
+ */
+function populateKTrucksGrid(gridElement, trucks) {
+  if (!gridElement) return;
+  
+  // Show loading message if no trucks available
+  if (!trucks || !trucks.length) {
+    gridElement.innerHTML = '<div class="loading-indicator">No K Trucks available.</div>';
     return;
   }
-
-  if (!kTruckImages || !kTruckImages.length) {
-    console.warn('populateKTrucksGrid: kTruckImages is empty or not loaded.');
-    kTrucksGrid.innerHTML = '<div class="loading-indicator">No K Trucks data available.</div>';
-    return;
-  }
-
-  kTrucksGrid.innerHTML = ''; // Clear existing content
-  const fragment = document.createDocumentFragment(); // Use a fragment for efficiency
-
-  kTruckImages.forEach(truck => {
-    const truckItem = createTruckItem(truck);
-    fragment.appendChild(truckItem);
+  
+  // Clear existing content
+  gridElement.innerHTML = '';
+  
+  // Create document fragment for efficient DOM updates
+  const fragment = document.createDocumentFragment();
+  trucks.forEach(truck => {
+    const item = createTruckItem(truck);
+    if (item) fragment.appendChild(item);
   });
-
-  kTrucksGrid.appendChild(fragment);
-  console.log('populateKTrucksGrid: K Trucks grid populated successfully.');
+  
+  // Append all items at once
+  gridElement.appendChild(fragment);
 }
 
+/**
+ * Create truck item element
+ * @param {Object} truck Truck data
+ * @returns {HTMLElement|null} Truck item element or null if data invalid
+ */
 function createTruckItem(truck) {
-  const truckItem = document.createElement('div');
-  truckItem.className = 'product-item';
-  truckItem.dataset.id = truck.id;
+  if (!truck || !truck.thumbnailUrl || !truck.alt || !truck.id) return null;
 
-  truckItem.innerHTML = `
+  const item = document.createElement('div');
+  item.className = 'product-item';
+  item.dataset.id = truck.id;
+  
+  item.innerHTML = `
     <img class="product-image" src="${truck.thumbnailUrl}" alt="${truck.alt}" onerror="this.src='https://via.placeholder.com/200x150?text=${truck.id}'">
     <div class="product-title">${truck.alt}</div>
   `;
-
-  truckItem.addEventListener('click', () => showKTruckDetails(truck.id));
-  return truckItem;
+  
+  // Add click event listener
+  item.addEventListener('click', () => showTruckDetails(truck.id));
+  
+  return item;
 }
 
-function showKTruckDetails(truckId) {
-  console.log(`showKTruckDetails: Showing details for truck ID: ${truckId}`);
+/**
+ * Show truck details in modal
+ * @param {string} truckId Truck ID
+ */
+function showTruckDetails(truckId) {
+  const modal = document.getElementById('ktruck-modal');
+  if (!modal) return;
 
-  const kTruckModal = document.getElementById('ktruck-modal');
-  if (!kTruckModal) {
-    console.warn('showKTruckDetails: kTruckModal element is null. Cannot show details.');
+  // Find truck data
+  const image = appData.kTruckImages.find(img => img.id === truckId);
+  const description = appData.kTruckDescriptions.find(desc => desc.id === truckId);
+
+  if (!image || !description) {
+    displayError(null, 'Truck details not found.');
     return;
   }
 
-  const imageData = appData.kTruckImages.find(img => img.id === truckId);
-  const descData = appData.kTruckDescriptions.find(desc => desc.id === truckId);
-
-  if (!imageData || !descData) {
-    displayError(null, `Could not find data for truck ID: ${truckId}`);
-    return;
+  // Populate and show modal
+  const contentContainer = modal.querySelector('.product-detail-container');
+  if (contentContainer) {
+    contentContainer.innerHTML = createTruckDetailHTML(image, description);
   }
+  
+  modal.style.display = 'flex';
 
-  kTruckModal.querySelector('.product-detail-container').innerHTML = createTruckDetailHTML(imageData, descData);
-  kTruckModal.style.display = 'flex';
-
-  const closeModal = kTruckModal.querySelector('.close-modal');
+  // Set up close button
+  const closeModal = modal.querySelector('.close-modal');
   if (closeModal) {
-    closeModal.addEventListener('click', () => {
-      console.log('showKTruckDetails: Closing modal.');
-      kTruckModal.style.display = 'none';
-    });
+    closeModal.addEventListener('click', () => modal.style.display = 'none');
   }
-
-  kTruckModal.addEventListener('click', (event) => {
-    if (event.target === kTruckModal) {
-      console.log('showKTruckDetails: Clicked outside modal. Hiding modal.');
-      kTruckModal.style.display = 'none';
-    }
+  
+  // Close modal when clicking outside
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) modal.style.display = 'none';
   });
 }
 
-function createTruckDetailHTML(imageData, descData) {
+/**
+ * Create truck detail HTML
+ * @param {Object} image Truck image data
+ * @param {Object} description Truck description data
+ * @returns {string} HTML content
+ */
+function createTruckDetailHTML(image, description) {
+  if (!image || !description) return '';
+  
   return `
-    <img class="product-detail-image" src="${imageData.imageUrl}" alt="${imageData.alt}" onerror="this.src='https://via.placeholder.com/800x500?text=${imageData.id}'">
-    <h2 class="product-detail-title">${descData.title}</h2>
+    <img class="product-detail-image" src="${image.imageUrl}" alt="${image.alt}" onerror="this.src='https://via.placeholder.com/800x500?text=${image.id}'">
+    <h2 class="product-detail-title">${description.title}</h2>
     <div class="product-detail-specs">
-        ${Object.entries(descData)
-          .filter(([key]) => ['year', 'engine', 'transmission', 'capacity', 'mileage', 'price'].includes(key))
-          .map(([key, value]) => `<div class="spec-item"><div class="spec-label">${key}</div><div class="spec-value">${value}</div></div>`)
-          .join('')}
+      ${Object.entries(description)
+        .filter(([key]) => ['year', 'engine', 'transmission', 'capacity', 'mileage', 'price'].includes(key))
+        .map(([key, value]) => `
+          <div class="spec-item">
+            <div class="spec-label">${key}</div>
+            <div class="spec-value">${value}</div>
+          </div>
+        `)
+        .join('')}
     </div>
-    <p class="product-detail-description">${descData.description}</p>
+    <p class="product-detail-description">${description.description}</p>
   `;
 }
 
+/**
+ * Set up event listeners for interactive elements
+ * @param {Object} elements DOM elements
+ * @param {Object} appData Application data
+ */
 function setupEventListeners(elements, appData) {
-  console.log('setupEventListeners: Setting up event listeners.');
-
-  if (elements.sidebarDetails) {
-    elements.sidebarDetails.addEventListener('toggle', () => {
-      console.log('setupEventListeners: sidebarDetails toggled.');
-      elements.sidebar.classList.toggle('expanded', elements.sidebarDetails.open);
-      elements.body.classList.toggle('menu-expanded', elements.sidebarDetails.open);
-      elements.body.classList.toggle('submenu-expanded', elements.sidebarDetails.open && elements.submenuDetails.some(detail => detail.open));
-      if (!elements.sidebarDetails.open) {
-        closeAllSubmenus(elements.submenuDetails);
-      }
-    });
-  } else {
-    console.warn('setupEventListeners: sidebarDetails element not found.');
-  }
-
-  elements.submenuDetails.forEach(submenu => {
-    submenu.addEventListener('toggle', (event) => {
-      console.log('setupEventListeners: Submenu toggled:', submenu);
-      event.stopPropagation();
-      closeOtherSubmenus(elements.submenuDetails, submenu);
-      elements.body.classList.toggle('submenu-expanded', elements.submenuDetails.some(detail => detail.open));
-    });
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && elements.kTruckModal && elements.kTruckModal.style.display === 'flex') {
-      console.log('setupEventListeners: Escape key pressed. Hiding modal.');
-      elements.kTruckModal.style.display = 'none';
+  // Skip if required elements missing
+  if (!elements || !elements.sidebarDetails || !elements.sidebar || !elements.body) return;
+  
+  // Sidebar toggle
+  elements.sidebarDetails.addEventListener('toggle', () => {
+    // Update sidebar expanded state
+    elements.sidebar.classList.toggle('expanded', elements.sidebarDetails.open);
+    elements.body.classList.toggle('menu-expanded', elements.sidebarDetails.open);
+    
+    // Handle submenu expanded state
+    const anySubmenuOpen = elements.submenuDetails.some(detail => detail.open);
+    if (elements.sidebarDetails.open && anySubmenuOpen) {
+      elements.body.classList.add('submenu-expanded');
+      elements.sidebar.classList.add('submenu-expanded');
+    } else {
+      elements.body.classList.remove('submenu-expanded');
+      elements.sidebar.classList.remove('submenu-expanded');
+    }
+    
+    // Close all submenus if sidebar is closed
+    if (!elements.sidebarDetails.open) {
+      closeAllSubmenus(elements.submenuDetails);
     }
   });
 
-  console.log('setupEventListeners: Event listeners set up successfully.');
+  // Submenu toggles
+  elements.submenuDetails.forEach(submenu => {
+    submenu.addEventListener('toggle', (event) => {
+      event.stopPropagation();
+      
+      // Close other submenus when one is opened
+      closeOtherSubmenus(elements.submenuDetails, submenu);
+      
+      // Direct class manipulation for submenu expanded state
+      const anySubmenuOpen = elements.submenuDetails.some(detail => detail.open);
+      if (anySubmenuOpen) {
+        elements.body.classList.add('submenu-expanded');
+        elements.sidebar.classList.add('submenu-expanded');
+      } else {
+        elements.body.classList.remove('submenu-expanded');
+        elements.sidebar.classList.remove('submenu-expanded');
+      }
+      
+      // Force reflow to ensure CSS is applied
+      void elements.body.offsetWidth;
+    });
+  });
+
+  // Escape key for modal
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && elements.kTruckModal && elements.kTruckModal.style.display === 'flex') {
+      elements.kTruckModal.style.display = 'none';
+    }
+  });
 }
 
-function closeAllSubmenus(submenuDetails) {
-  console.log('closeAllSubmenus: Closing all submenus.');
-  submenuDetails.forEach(submenu => {
+/**
+ * Close all submenu details
+ * @param {Array} submenus Submenu detail elements
+ */
+function closeAllSubmenus(submenus) {
+  if (!submenus) return;
+  
+  submenus.forEach(submenu => {
     submenu.open = false;
   });
 }
 
-function closeOtherSubmenus(submenuDetails, currentSubmenu) {
-  console.log('closeOtherSubmenus: Closing other submenus.');
-  submenuDetails.forEach(otherSubmenu => {
-    if (otherSubmenu !== currentSubmenu) {
-      otherSubmenu.open = false;
+/**
+ * Close all submenus except the current one
+ * @param {Array} submenus Submenu detail elements
+ * @param {HTMLElement} current Current submenu to keep open
+ */
+function closeOtherSubmenus(submenus, current) {
+  if (!submenus || !current) return;
+  
+  submenus.forEach(submenu => {
+    if (submenu !== current) {
+      submenu.open = false;
     }
   });
 }
 
+/**
+ * Fetch data from API endpoint
+ * @param {string} url API endpoint URL
+ * @returns {Promise<Object>} Parsed JSON response
+ */
 async function fetchData(url) {
-  console.log(`fetchData: Fetching data from URL: ${url}`);
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      const errorMessage = `fetchData: Failed to fetch ${url}: ${response.status} ${response.statusText}`;
-      console.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-    const data = await response.json();
-    console.log(`fetchData: Data fetched successfully from ${url}:`, data);
-    return data;
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
   } catch (error) {
-    console.error(`fetchData: Error fetching data from ${url}:`, error);
+    console.error(`fetchData: ${error}`);
     throw error;
   }
 }
 
+/**
+ * Display error message
+ * @param {HTMLElement|null} element Element to display error in, or null for console only
+ * @param {string} message Error message
+ */
 function displayError(element, message) {
-  console.error(`displayError: ${message}`);
   if (element) {
     element.innerHTML = `<div class="loading-indicator error">${message}</div>`;
+  }
+  console.error(`displayError: ${message}`);
+}
+
+/**
+ * Force submenu expansion - useful for debugging
+ */
+function forceSubmenuExpansion() {
+  const body = document.body;
+  const sidebar = document.querySelector('.sidebar-container');
+  
+  if (body && sidebar) {
+    body.classList.add('submenu-expanded');
+    sidebar.classList.add('submenu-expanded');
+    console.log('Forced submenu expansion classes applied');
+  } else {
+    console.error('Could not find required elements for submenu expansion');
   }
 }
