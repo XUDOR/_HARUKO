@@ -88,6 +88,8 @@ function initializeAppData() {
  */
 async function loadInitialData(appData) {
   try {
+    console.log('loadInitialData: Starting to load data from API');
+    
     // Load data in parallel for better performance
     const [kTruckImages, kTruckDescriptions, linksData] = await Promise.all([
       fetchData('/api/data/ktruckimage.json'),
@@ -95,9 +97,16 @@ async function loadInitialData(appData) {
       fetchData('/api/data/links.json')
     ]);
 
+    console.log('Data loaded from API:');
+    console.log('- K Truck Images:', kTruckImages?.length || 0, 'items');
+    console.log('- K Truck Descriptions:', kTruckDescriptions?.length || 0, 'items');
+    
+    // Fix image paths if needed
+    const fixedImages = fixImagePaths(kTruckImages || []);
+    
     // Populate app data
-    appData.kTruckImages = kTruckImages;
-    appData.kTruckDescriptions = kTruckDescriptions;
+    appData.kTruckImages = fixedImages;
+    appData.kTruckDescriptions = kTruckDescriptions || [];
     
     // Only update if data exists
     if (linksData && linksData.skiptSkool) {
@@ -113,11 +122,36 @@ async function loadInitialData(appData) {
 }
 
 /**
+ * Fix image paths in truck data
+ * @param {Array} trucks Truck data
+ * @returns {Array} Trucks with fixed image paths
+ */
+function fixImagePaths(trucks) {
+  return trucks.map(truck => {
+    // Make a copy of the truck object
+    const fixedTruck = {...truck};
+    
+    // Fix paths by ensuring they start with /assets/ or assets/
+    if (fixedTruck.imageUrl && !fixedTruck.imageUrl.includes('assets')) {
+      fixedTruck.imageUrl = `/assets/${fixedTruck.imageUrl.split('/').pop()}`;
+    }
+    
+    if (fixedTruck.thumbnailUrl && !fixedTruck.thumbnailUrl.includes('assets')) {
+      fixedTruck.thumbnailUrl = `/assets/${fixedTruck.thumbnailUrl.split('/').pop()}`;
+    }
+    
+    return fixedTruck;
+  });
+}
+
+/**
  * Render initial UI components
  * @param {Object} elements DOM elements
  * @param {Object} appData Application data
  */
 function renderInitialUI(elements, appData) {
+  console.log('renderInitialUI: Starting to render UI');
+  
   const initialSections = {
     section1: { title: 'K Trucks', content: 'Browse our selection of compact Japanese Kei trucks, perfect for urban deliveries and small businesses. Features include excellent fuel economy and easy maneuverability.' },
     section2: { title: 'Kotatsu', content: 'Authentic Japanese Kotatsu tables, combining comfort and functionality. Perfect for keeping warm during winter while enjoying meals or relaxing.' },
@@ -128,9 +162,42 @@ function renderInitialUI(elements, appData) {
 
   updateSections(elements.containers, initialSections, appData);
   
-  // Populate K Trucks grid if it exists
-  if (elements.kTrucksGrid) {
-    populateKTrucksGrid(elements.kTrucksGrid, appData.kTruckImages);
+  // Add a small delay to ensure DOM is updated before trying to populate
+  setTimeout(() => {
+    console.log('Delayed grid population starting');
+    // Try to get the grid element directly
+    const kTrucksGrid = document.getElementById('ktrucks-grid');
+    if (kTrucksGrid) {
+      console.log('Found ktrucks-grid element, populating with', appData.kTruckImages.length, 'trucks');
+      populateKTrucksGrid(kTrucksGrid, appData.kTruckImages);
+    } else {
+      console.error('Could not find ktrucks-grid element after timeout');
+    }
+  }, 100);
+  
+  // Add click listeners to section details to handle dynamic content
+  setupSectionListeners(appData);
+}
+
+/**
+ * Setup section detail listeners for dynamic content loading
+ * @param {Object} appData Application data
+ */
+function setupSectionListeners(appData) {
+  // Get the K Trucks section
+  const kTrucksSection = document.querySelector('#section1 .section-details');
+  
+  if (kTrucksSection) {
+    kTrucksSection.addEventListener('toggle', () => {
+      if (kTrucksSection.open) {
+        console.log('K Trucks section opened, ensuring grid is populated');
+        const kTrucksGrid = document.getElementById('ktrucks-grid');
+        if (kTrucksGrid && (!kTrucksGrid.children.length || kTrucksGrid.children.length === 1 && kTrucksGrid.querySelector('.loading-indicator'))) {
+          console.log('Grid appears empty, repopulating');
+          populateKTrucksGrid(kTrucksGrid, appData.kTruckImages);
+        }
+      }
+    });
   }
 }
 
@@ -233,10 +300,16 @@ function renderKTrucks(contentDiv, content) {
  * @param {Array} trucks Truck data
  */
 function populateKTrucksGrid(gridElement, trucks) {
-  if (!gridElement) return;
+  console.log('populateKTrucksGrid called with', trucks?.length, 'trucks');
+  
+  if (!gridElement) {
+    console.error('populateKTrucksGrid: No grid element provided');
+    return;
+  }
   
   // Show loading message if no trucks available
   if (!trucks || !trucks.length) {
+    console.warn('populateKTrucksGrid: No trucks data available');
     gridElement.innerHTML = '<div class="loading-indicator">No K Trucks available.</div>';
     return;
   }
@@ -246,13 +319,20 @@ function populateKTrucksGrid(gridElement, trucks) {
   
   // Create document fragment for efficient DOM updates
   const fragment = document.createDocumentFragment();
+  
   trucks.forEach(truck => {
+    console.log('Creating truck item for', truck.id, truck.alt);
     const item = createTruckItem(truck);
-    if (item) fragment.appendChild(item);
+    if (item) {
+      fragment.appendChild(item);
+    } else {
+      console.error('Failed to create item for truck', truck.id);
+    }
   });
   
   // Append all items at once
   gridElement.appendChild(fragment);
+  console.log('Grid populated with', gridElement.children.length, 'truck items');
 }
 
 /**
@@ -261,19 +341,28 @@ function populateKTrucksGrid(gridElement, trucks) {
  * @returns {HTMLElement|null} Truck item element or null if data invalid
  */
 function createTruckItem(truck) {
-  if (!truck || !truck.thumbnailUrl || !truck.alt || !truck.id) return null;
+  if (!truck || !truck.thumbnailUrl || !truck.alt || !truck.id) {
+    console.error('createTruckItem: Invalid truck data', truck);
+    return null;
+  }
 
   const item = document.createElement('div');
   item.className = 'product-item';
   item.dataset.id = truck.id;
   
+  // Make sure the URL starts with / or is an absolute URL
+  const imgUrl = truck.thumbnailUrl.startsWith('/') ? truck.thumbnailUrl : `/${truck.thumbnailUrl}`;
+  
   item.innerHTML = `
-    <img class="product-image" src="${truck.thumbnailUrl}" alt="${truck.alt}" onerror="this.src='https://via.placeholder.com/200x150?text=${truck.id}'">
+    <img class="product-image" src="${imgUrl}" alt="${truck.alt}" onerror="this.src='https://via.placeholder.com/200x150?text=${truck.id}'; console.log('Image load error for ${truck.id}');">
     <div class="product-title">${truck.alt}</div>
   `;
   
   // Add click event listener
-  item.addEventListener('click', () => showTruckDetails(truck.id));
+  item.addEventListener('click', () => {
+    console.log('Truck clicked:', truck.id);
+    showTruckDetails(truck.id);
+  });
   
   return item;
 }
@@ -283,18 +372,26 @@ function createTruckItem(truck) {
  * @param {string} truckId Truck ID
  */
 function showTruckDetails(truckId) {
+  console.log('showTruckDetails called for', truckId);
+  
   const modal = document.getElementById('ktruck-modal');
-  if (!modal) return;
+  if (!modal) {
+    console.error('Modal element not found');
+    return;
+  }
 
   // Find truck data
   const image = appData.kTruckImages.find(img => img.id === truckId);
   const description = appData.kTruckDescriptions.find(desc => desc.id === truckId);
 
   if (!image || !description) {
+    console.error('Truck data not found for ID:', truckId);
     displayError(null, 'Truck details not found.');
     return;
   }
 
+  console.log('Found truck data:', image, description);
+  
   // Populate and show modal
   const contentContainer = modal.querySelector('.product-detail-container');
   if (contentContainer) {
@@ -306,12 +403,18 @@ function showTruckDetails(truckId) {
   // Set up close button
   const closeModal = modal.querySelector('.close-modal');
   if (closeModal) {
-    closeModal.addEventListener('click', () => modal.style.display = 'none');
+    closeModal.addEventListener('click', () => {
+      console.log('Modal close button clicked');
+      modal.style.display = 'none';
+    });
   }
   
   // Close modal when clicking outside
   modal.addEventListener('click', (event) => {
-    if (event.target === modal) modal.style.display = 'none';
+    if (event.target === modal) {
+      console.log('Modal background clicked');
+      modal.style.display = 'none';
+    }
   });
 }
 
@@ -324,8 +427,11 @@ function showTruckDetails(truckId) {
 function createTruckDetailHTML(image, description) {
   if (!image || !description) return '';
   
+  // Make sure image URL is correct
+  const imgUrl = image.imageUrl.startsWith('/') ? image.imageUrl : `/${image.imageUrl}`;
+  
   return `
-    <img class="product-detail-image" src="${image.imageUrl}" alt="${image.alt}" onerror="this.src='https://via.placeholder.com/800x500?text=${image.id}'">
+    <img class="product-detail-image" src="${imgUrl}" alt="${image.alt}" onerror="this.src='https://via.placeholder.com/800x500?text=${image.id}'; console.log('Detail image load error for ${image.id}');">
     <h2 class="product-detail-title">${description.title}</h2>
     <div class="product-detail-specs">
       ${Object.entries(description)
@@ -473,4 +579,53 @@ function forceSubmenuExpansion() {
   } else {
     console.error('Could not find required elements for submenu expansion');
   }
+}
+
+/**
+ * Debugging helpers - you can run these in your browser console
+ */
+function forceGridPopulation() {
+  const grid = document.getElementById('ktrucks-grid');
+  if (grid) {
+    console.log('Attempting to force populate grid with', appData.kTruckImages.length, 'items');
+    populateKTrucksGrid(grid, appData.kTruckImages);
+    return 'Grid population attempted';
+  } else {
+    return 'Could not find grid element';
+  }
+}
+
+function testImageLoading() {
+  if (!appData.kTruckImages || !appData.kTruckImages.length) {
+    return 'No truck images in appData';
+  }
+  
+  const results = [];
+  appData.kTruckImages.forEach(truck => {
+    const img = new Image();
+    img.onload = () => results.push(`✅ ${truck.id}: ${truck.thumbnailUrl} loaded`);
+    img.onerror = () => results.push(`❌ ${truck.id}: ${truck.thumbnailUrl} failed`);
+    img.src = truck.thumbnailUrl;
+  });
+  
+  // Check after a delay
+  setTimeout(() => console.log(results.join('\n')), 2000);
+  
+  return 'Testing image loading, check console in 2 seconds';
+}
+
+function inspectElements() {
+  const section = document.getElementById('section1');
+  const details = section?.querySelector('.section-details');
+  const content = section?.querySelector('.section-content');
+  const grid = document.getElementById('ktrucks-grid');
+  
+  return {
+    'Section exists': !!section,
+    'Section details exists': !!details,
+    'Section content exists': !!content,
+    'Grid exists': !!grid,
+    'Grid has children': grid ? grid.children.length : 'N/A',
+    'Section has correct ID': section?.id === 'section1'
+  };
 }

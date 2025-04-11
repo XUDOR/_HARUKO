@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 // Serve static assets from /public
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Explicitly serve assets for better path handling
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
+
 // Parse JSON bodies from incoming requests
 app.use(express.json());
 
@@ -32,7 +35,7 @@ app.get('/api/data/:filename', (req, res) => {
     }
   });
 });
-/* -------- this was commented out ---then the server started .... 
+
 // POST: Handle fake signup (no database)
 app.post('/api/signup', (req, res) => {
   const { name, email } = req.body;
@@ -51,11 +54,45 @@ app.post('/api/signup', (req, res) => {
   });
 });
 
-// Catch-all: Send back index.html for frontend routing
-app.get('*', (req, res) => {
+// Debugging routes
+app.get('/api/debug/check-assets', (req, res) => {
+  const assetDir = path.join(__dirname, 'public', 'assets');
+  
+  fs.readdir(assetDir, (err, files) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to read asset directory', details: err.message });
+    }
+    
+    res.json({ 
+      success: true, 
+      assetPath: assetDir,
+      files: files 
+    });
+  });
+});
+
+app.get('/api/debug/server-info', (req, res) => {
+  res.json({
+    nodeVersion: process.version,
+    platform: process.platform,
+    uptime: process.uptime(),
+    serverTime: new Date().toISOString(),
+    publicPath: path.join(__dirname, 'public'),
+    dataPath: path.join(__dirname, 'data')
+  });
+});
+
+// Catch-all route - fixed to avoid path-to-regexp error
+// Using a simple string path instead of regex or pattern
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-*/
+
+// Specific route for any other paths
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at: http://localhost:${PORT}`);
